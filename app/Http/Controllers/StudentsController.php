@@ -6,16 +6,29 @@ use App\Models\Students;
 use App\Http\Requests\StoreStudentsRequest;
 use App\Http\Requests\UpdateStudentsRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class StudentsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+
+        if(!empty($search)) {
+            $dataStudents = Students::where('students.idstudents','like','%'.$search.'%')
+            ->orWhere('students.fullname','like','%'.$search.'%')
+            ->paginate(10)->onEachSide(2)->fragment('std');
+        } else {
+            $dataStudents = Students::paginate(10)->onEachSide(2)->fragment('std');
+
+        }
+
         return view('students.data')->with([
-            'students' => Students::all()
+            'students' => $dataStudents,
+            'search' => $search
         ]);
     }
 

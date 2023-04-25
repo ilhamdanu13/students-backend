@@ -15,6 +15,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+            <form method="GET">
+                <div class="row mb-3">
+                    <label for="search" class="col-sm-2 col-form-label">Cari Data</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control form-control-sm" value="" placeholder="Please input key for search data..." name="search" autofocus value="{{ $search }}"/>
+                    </div>
+                </div>
+            </form>
             <table class="table table-sm table-striped table-bordered">
                 <thead>
                     <tr>
@@ -28,9 +36,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $nomor = 1 + (($students->currentPage() - 1) * $students->perPage());
+                    @endphp
                     @foreach ($students as $row)
                     <tr>
-                        <th>{{ $loop->iteration }}</th>
+                        {{-- <th>{{ $loop->iteration }}</th> --}}
+                        <th>{{ $nomor++ }}</th>
                         <td>{{ $row->idstudents }}</td>
                         <td>{{ $row->fullname }}</td>
                         <td>{{ $row->gender }}</td>
@@ -50,10 +62,11 @@
                             </form>
                         </td>
                     </tr>
-
                     @endforeach
                 </tbody>
             </table>
+            {{-- {{ $students->links() }} --}}
+            {!! $students->appends(Request::except('page'))->render() !!}
         </div>
     </div>
     <script>
